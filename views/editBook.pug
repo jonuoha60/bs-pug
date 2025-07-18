@@ -1,0 +1,37 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css')
+    title Edit Book
+
+  body.container.mt-5
+    h1.mb-4 Edit Book
+
+    form(action=`/books/edit?id=${book._id}` method="POST")
+      .mb-3
+        label.form-label(for="title") Title:
+        input.form-control(type="text" name="title" id="title" required value=book.title)
+
+      .mb-3
+        label.form-label(for="author") Author:
+        input.form-control(type="text" name="author" id="author" required value=book.author)
+
+      .mb-3
+        label.form-label(for="pages") Pages:
+        input.form-control(type="number" name="pages" id="pages" required value=book.pages)
+
+      .mb-3
+        label.form-label(for="genres") Genres (comma separated):
+        input.form-control(type="text" name="genres" id="genres" required value=book.genres.join(', '))
+
+      .mb-3
+        label.form-label(for="rating") Rating:
+        input.form-control(type="number" name="rating" id="rating" step="0.1" min="0" max="10" required value=book.rating)
+
+      button.btn.btn-primary(type="submit") Save
+
+    a.btn.btn-secondary.mt-3(href="/") Back to Home
+
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")

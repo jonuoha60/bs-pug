@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1 Bookstore
+
+  if books && books.length
+    each book in books
+      .book-card
+        h3
+          a(href=`/books/details?id=${book._id}`)= book.title
+        p
+          strong Author:
+          |  #{book.author}
+        p
+          strong Pages:
+          |  #{book.pages}
+        p
+          strong Rating:
+          |  #{book.rating}
+        p
+          strong Genres:
+        ul
+          each genre in book.genres
+            li= genre
+
+        a(href=`/books/edit?id=${book._id}`) Edit
+        hr
+  else
+    p No books found.
