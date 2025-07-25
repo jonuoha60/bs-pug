@@ -7,12 +7,12 @@ A full-featured **online book store** built with **Node.js**, **Express**, and *
 ## Features
 
  **User authentication** with `passport-local`
-  - Register with email and password
-  - Login/logout with session support
--  **User session tracking**
--  **Book listing and browsing**
--  **MongoDB/Mongoose** for data modeling
--  **Pug** templating engine for clean UI rendering
+- Register with email and password
+- Login/logout with session support
+-  User session tracking
+-  Book listing and browsing
+-  MongoDB/Mongoose** for data modeling
+-  Pug templating engine for clean UI rendering
 -  Modular routing (`/users`, `/books`)
 -  Environment config with `.env` support
 
