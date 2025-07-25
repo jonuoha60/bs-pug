@@ -1,6 +1,5 @@
 let mongoose = require("mongoose");
 
-// User Schema
 let userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -16,5 +15,4 @@ let userSchema = mongoose.Schema({
     }
 });
 
-// Export model
 let User = module.exports = mongoose.model("newuser", userSchema);
