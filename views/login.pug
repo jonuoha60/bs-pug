@@ -1,0 +1,19 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Login
+    body 
+        h1= "Login"
+    form(action="/users/login" method="POST")
+        p Email:
+        input(type="email" name="email" placeholder="Enter email")
+        p Password:
+        input(type="password" name="password" placeholder="Enter password")
+        p Don't have an account? 
+        a(href="/users/register") Register
+        br
+        input(type="submit" value="Login")
+        
+        

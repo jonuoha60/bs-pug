@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Register
+    body 
+        h1= "Register"
+
+        if errors
+            ul(style="color: red;")
+                each error in errors
+                    li= error.message
+form(action="/users/register" method="POST")
+        p Username:
+        input(type="text" name="username" placeholder="Enter username")
+        p Email:
+        input(type="email" name="email" placeholder="Enter email")
+        p Password:
+        input(type="password" name="password" placeholder="Enter password")
+        p Confirm Password:
+        input(type="password" name="confirm_password" placeholder="Enter password")
+        p Have an account already? 
+        a(href="/users/login") Login
+        br
+        input(type="submit")
+        

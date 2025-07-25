@@ -1,71 +1,95 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var lessMiddleware = require('less-middleware');
-var logger = require('morgan');
-var mongoose = require("mongoose")
-let Book = require("./models/book")
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var libraryRouter = require('./routes/library');
+// Load environment variables
+require('dotenv').config();
+
+// Import express
+const express = require("express");
+const path = require("path");
+
+const mongoose = require("mongoose");
+
+const passport = require("passport");
+
+const session = require("express-session");
+
+const config = require("./config/database");
 
 
-var app = express();
+var book_routes = require("./routes/library");
+
+var user_routes = require("./routes/users");
 
 
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then( () => console.log("MongoDB connected"))
+    .catch( (err) => console.error("MongoDB connection error:", err))
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// Get database connection
+const db = mongoose.connection;
 
-app.use(logger('dev'));
+// Check connection
+db.once("open", function(){
+    console.log("Connected to MongoDB")
+})
+
+
+// Check for DB errors
+db.on("error", function (err) {
+  console.log("DB Error");
+});
+
+
+const app = express();
+
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(lessMiddleware(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/books', libraryRouter);
+app.use(express.static("public"));
 
 
+app.use(session({
+  secret: "secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {},
+}));
 
-mongoose.connect("mongodb://127.0.0.1:27017/peopledb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+// Passport config
+require("./config/passport")(passport);
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Import Book Mongoose schemas
+let Book = require("./models/book");
+
+// Load view engine
+app.set("/", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
+// Wildcard route to allow user to be
+// used in templates
+app.get("*", function(req, res, next){
+    res.locals.user = req.user || null;
+    next();
 })
-.then(() => {
-    console.log("Connected to MongoDB");
-})
-.catch((err) => {
-    console.error("MongoDB connection error:", err);
+
+app.use("/users", user_routes);
+app.use("/books", book_routes);
+
+
+app.use("/", async function (req, res) {
+  let books = await Book.find({})
+    if (!books) {
+      res.send("No books found")
+    } else {
+      // Pass books to index
+      res.render("index", {
+        books: books,
+      });
+    }
 });
 
-// Book.insertMany(books)
-//   .then(() => {
-//     console.log("Books inserted successfully");
-//     mongoose.connection.close();
-//   })
-//   .catch(err => {
-//     console.error("Error inserting books:", err);
-//   });
-
-// // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
+// Set constant for port
 module.exports = app;
